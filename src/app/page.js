@@ -2,16 +2,22 @@ import Image from "next/image";
 import Header from "../components/Header";
 import image from "../images/bg.jpg";
 import image1 from "../images/p2.png";
-import Bgi from "../images/star.jpg"
+import Bgi from "../images/bg1.jpg";
 
 export default function Home() {
   return (
-    <div className="bg-white min-h-screen flex flex-col" >
+    <div className="bg-white min-h-screen flex flex-col">
       <Header />
-      <div className="flex items-center justify-around bg-white text-white flex-grow "  style={{
-      backgroundImage: `url(${Bgi.src})`,
-    }}>
-        <div className="">
+      <div
+        className="flex items-center justify-around text-white flex-grow"
+        style={{
+          backgroundImage: `url(${Bgi.src})`,
+          backgroundSize: "cover", 
+          backgroundPosition: "center", 
+          backgroundRepeat: "no-repeat", 
+        }}
+      >
+        <div>
           <Image
             src={image}
             width={900}
@@ -20,7 +26,7 @@ export default function Home() {
             className="mr-[10%]"
           />
         </div>
-        <div className="flex mr-">
+        <div className="flex">
           <p className="text-[28px] max-w-xl text-left text-gray-500">
             <span className="text-6xl font-bold text-gray-600">Welcome </span>A
             daily blog is like a captivating diary shared with the world, where
@@ -39,3 +45,6 @@ export default function Home() {
           />
         </div>
       </div>
+    </div>
+  );
+}
