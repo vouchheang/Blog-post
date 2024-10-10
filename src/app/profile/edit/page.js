@@ -9,6 +9,9 @@ import Bgi from "@/images/bg1.jpg";
 
 function Profile() {
   const [user, setUser] = useState(null); // State to hold user data
+  const [profileImage, setProfileImage] = useState(null); // State for profile image
+  const [loading, setLoading] = useState(false); // State for loading
+  const [error, setError] = useState(null); // State for error
   const [formData, setFormData] = useState({
     lastName: '',
     firstName: '',
@@ -34,6 +37,7 @@ function Profile() {
           if (response.ok) {
             const data = await response.json();
             setUser(data); // Set user data in state
+            setProfileImage(data.avatar);
             setFormData({
               lastName: data.lastName,
               firstName: data.firstName,
@@ -92,6 +96,55 @@ function Profile() {
     router.push("/profile"); // Navigate back to the profile page
   };
 
+  const handleImageChange = async (event) => {
+    setLoading(true);
+    setError(null);
+
+    const token = localStorage.getItem('token');
+    const file = event.target.files?.[0]; 
+
+    if (!file) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await axios.post("https://students-hackaton.vercel.app/upload/upload-image", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}` // Fixed: Added backticks for string interpolation
+        },
+      });
+      console.log("Image uploaded successfully:", response.data);
+
+      const avatarUrl = response.data.url; 
+
+      const updateResponse = await fetch('https://students-hackaton.vercel.app/user/change-profile', {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`, // Fixed: Added backticks
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ avatar: avatarUrl }),
+      });
+
+      if (!updateResponse.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      setProfileImage(avatarUrl); // Update the profile image state with the new image URL
+    } catch (err) {
+      setError('Failed to upload and update image.');
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <div className="bg-white min-h-screen flex flex-col">
       <Header />
@@ -105,21 +158,35 @@ function Profile() {
         }}
       >
         {/* Profile Form */}
-        <div className="bg-gradient-to-r from-blue-200 to-purple-200 bg-opacity-90 w-4/5 md:w-2/5 p-8 rounded-lg shadow-lg text-gray-800 h-[700px]">
+        <div className="bg-gradient-to-r from-blue-200 to-purple-200 bg-opacity-90 w-4/5 md:w-2/5 p-8 rounded-lg shadow-lg text-gray-800 h-full">
           {/* Avatar and Edit Profile */}
 
           <div className="flex flex-col items-center mb-6">
-            {/* If user has an avatar, display it, otherwise use a placeholder */}
-            <div className="w-24 h-24 bg-gray-300 rounded-full mb-2">
-              {user?.avatar ? (
-                <img src={user.avatar} alt="User Avatar" className="rounded-full w-full h-full" />
+            <div className="relative w-32 h-32 mb-4">
+              {profileImage ? (
+                <img
+                  src={profileImage}
+                  alt="Profile"
+                  className="w-full h-full rounded-full object-cover border-4 border-blue-500"
+                />
               ) : (
-                <div className="w-24 h-24 bg-gray-300 rounded-full mb-2"></div>
+                <div className="w-full h-full bg-gray-300 rounded-full flex items-center justify-center border-4 border-gray-400">
+                  <span className="text-gray-700">No Image</span>
+                </div>
               )}
             </div>
-            <p className="text-gray-700">Edit profile</p>
+            <label htmlFor="profileImage" className="cursor-pointer text-blue-600 hover:underline">
+              {loading ? 'Uploading...' : 'Upload Image'}
+            </label>
+            <input
+              type="file"
+              id="profileImage"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageChange}
+            />
+            {error && <p className="text-red-500 mt-2">{error}</p>}
           </div>
-
           {/* Profile Form */}
           {user ? (
             <form className="space-y-4" onSubmit={handleSubmit}>
