@@ -3,13 +3,17 @@ import { useEffect, useState } from "react";
 import AxiosInstance from "../utils/axiosInstance";
 import { PencilIcon } from "@heroicons/react/24/solid";
 
-const Blog = () => {
+const UpdateBlog = ({ blog = null, isOpen = false }) => {
   const [blogs, setBlogs] = useState([]);
+  const [id, setId] = useState("");
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [thumbnail, setThumbnail] = useState(null);
   const [error, setError] = useState(null);
+
+  // Logging to verify if the component renders
+  console.log("UpdateBlog component rendered");
 
   useEffect(() => {
     fetchBlogs();
@@ -24,13 +28,6 @@ const Blog = () => {
     }
   };
 
-  const handleEdit = (blog) => {
-    setSelectedBlog(blog);
-    setTitle(blog.title);
-    setDesc(blog.desc);
-    setThumbnail(null);
-  };
-
   const handleUpdateBlog = async (e) => {
     e.preventDefault();
     setError(null);
@@ -41,7 +38,7 @@ const Blog = () => {
     }
 
     try {
-      let imageUrl = selectedBlog.thumbnail;
+      let imageUrl = selectedBlog?.thumbnail;
 
       if (thumbnail) {
         const imageFormData = new FormData();
@@ -69,11 +66,14 @@ const Blog = () => {
         thumbnail: imageUrl,
       };
 
-      const response = await AxiosInstance.put(`blog/update-blog/${selectedBlog.id}`, updatedData);
+      const response = await AxiosInstance.put(
+        `blog/update-blog/${id}`,
+        updatedData
+      );
 
       setBlogs((prevBlogs) =>
         prevBlogs.map((blog) =>
-          blog.id === selectedBlog.id ? response.data : blog
+          blog._id === selectedBlog._id ? response.data : blog
         )
       );
 
@@ -88,13 +88,14 @@ const Blog = () => {
     setTitle("");
     setDesc("");
     setThumbnail(null);
+    setId("");
   };
 
   return (
     <div className="card bg-white rounded-xl shadow-md p-6 w-[90%] m-auto">
       <h1 className="text-2xl font-bold mb-4">Update Blogs</h1>
 
-      {selectedBlog && (
+      {selectedBlog || true ? ( // Always show the form for debugging purposes
         <form onSubmit={handleUpdateBlog} className="mb-8">
           <input
             type="text"
@@ -134,26 +135,11 @@ const Blog = () => {
 
           {error && <p className="text-red-500 mt-2">{error}</p>}
         </form>
+      ) : (
+        <p>Please select a blog to edit.</p>
       )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {blogs.map((blog) => (
-          <div key={blog.id} className="border rounded-md p-4">
-            <h2 className="text-xl font-bold">{blog.title}</h2>
-            <p className="mt-2">{blog.desc}</p>
-            <img src={blog.thumbnail} alt={blog.title} className="mt-2 max-w-full h-auto rounded-md" />
-            <button
-              onClick={() => handleEdit(blog)}
-              className="mt-2 p-2 bg-blue-500 text-white rounded flex items-center"
-            >
-              <PencilIcon className="h-5 w-5 mr-1" />
-              Edit
-            </button>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
 
-export default Blog;
+export default UpdateBlog;
