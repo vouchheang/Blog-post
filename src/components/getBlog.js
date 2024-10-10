@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import AxiosInstance from "../utils/axiosInstance";
 import { TrashIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/solid";
+import UpdateBlogForm from "@/components/updateBlog";
 
 const Blog = () => {
   const [data, setData] = useState([]);
@@ -76,14 +77,25 @@ const Blog = () => {
       setError("Failed to create blog. Please try again.");
     }
   };
+  const handleEdit = (post) => {
+    setSelecaetedBlog(post);
+    setTitle(post.title);
+    setDesc(post.desc);
+    setId(post._id);
+    setThumbnail(null);
+  };
+
+
 
   return (
     <div className="space-y-6 mt-6">
+      <UpdateBlogForm />
       <button
         onClick={() => setShowForm(!showForm)}
         className="text-white bg-gradient-to-r from-blue-500 to-purple-500 rounded-full p-2 shadow-md transform transition-transform hover:scale-110 ml-[90%]"
       >
         <PlusIcon className="h-9 w-9" />
+        
       </button>
 
       {/* Blog Creation Form */}
@@ -138,7 +150,13 @@ const Blog = () => {
             </h2>
             <p className="text-gray-800 text-lg">{post.desc}</p>
             <div className="space-x-4 flex mt-4">
-              <PencilIcon className="h-7 w-5 text-gray-500 cursor-pointer hover:text-blue-500" />
+              <button
+                onClick={() => handleEdit(post)}
+                className="mt-2 p-2 bg-blue-500 text-white rounded flex items-center"
+              >
+                <PencilIcon className="h-5 w-5 mr-1" />
+                Edit
+              </button>{" "}
               <TrashIcon className="h-6 w-6 text-gray-500 cursor-pointer hover:text-red-500" />
             </div>
           </div>
