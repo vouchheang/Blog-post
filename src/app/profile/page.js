@@ -4,9 +4,11 @@ import { useRouter } from "next/navigation"; // Import useRouter hook
 import Image from "next/image";
 import Header from "../../components/Header";
 import Bgi from "@/images/bg1.jpg";
+import axios from 'axios'; // Ensure axios is imported
 
 function Profile() {
   const [user, setUser] = useState(null); // State to hold user data
+  const [profileImage, setProfileImage] = useState(null); // State for profile image
   const router = useRouter(); // Initialize router
 
   useEffect(() => {
@@ -26,6 +28,7 @@ function Profile() {
           if (response.ok) {
             const data = await response.json();
             setUser(data); // Set user data in state
+            setProfileImage(data.avatar); // Set user's current profile image
           } else {
             console.error("Failed to fetch user profile");
           }
@@ -42,6 +45,10 @@ function Profile() {
     router.push("/profile/edit"); // Navigate to the edit information page
   };
 
+  const handleBackToBlogClick = () => {
+    router.push("/blog"); // Navigate to the blog page
+  };
+
   return (
     <div className="bg-white min-h-screen flex flex-col">
       <Header />
@@ -54,22 +61,26 @@ function Profile() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        {/* Profile Form */}
+        {/* Profile Display */}
         <div className="bg-gradient-to-r from-blue-200 to-purple-200 bg-opacity-90 w-4/5 md:w-2/5 p-8 rounded-lg shadow-lg text-gray-800 h-auto">
-          {/* Avatar and Edit Profile */}
+          {/* Avatar and Profile Info */}
           <div className="flex flex-col items-center mb-6">
-            {/* If user has an avatar, display it, otherwise use a placeholder */}
-            <div className="w-24 h-24 bg-gray-300 rounded-full mb-2">
-              {user?.avatar ? (
-                <img src={user.avatar} alt="User Avatar" className="rounded-full w-full h-full" />
+            <div className="relative w-32 h-32 mb-4">
+              {profileImage ? (
+                <img
+                  src={profileImage}
+                  alt="Profile"
+                  className="w-full h-full rounded-full object-cover border-4 border-blue-500"
+                />
               ) : (
-                <div className="w-24 h-24 bg-gray-300 rounded-full mb-2"></div>
+                <div className="w-full h-full bg-gray-300 rounded-full flex items-center justify-center border-4 border-gray-400">
+                  <span className="text-gray-700">No Image</span>
+                </div>
               )}
             </div>
-            <p className="text-gray-700">Profile</p>
           </div>
 
-          {/* Profile Form */}
+          {/* Profile Information */}
           {user ? (
             <form className="space-y-4">
               <div>
@@ -92,17 +103,24 @@ function Profile() {
               </div>
               <div>
                 <label className="block text-gray-700 mb-2">Bio</label>
-                <div className="w-full p-2 border border-gray-300 rounded bg-white  " >
+                <div className="w-full p-2 border border-gray-300 rounded bg-white">
                   {user.bio}
                 </div>
               </div>
-              <div className="text-end">
+              <div className="flex justify-between">
                 <button
                   type="button"
                   onClick={handleEditClick} // Handle edit button click
                   className="px-5 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-200"
                 >
                   Edit Information
+                </button>
+                <button
+                  type="button"
+                  onClick={handleBackToBlogClick} // Handle back to blog button click
+                  className="px-5 bg-gray-500 text-white py-2 rounded-md hover:bg-gray-600 transition duration-200"
+                >
+                  Back 
                 </button>
               </div>
             </form>
