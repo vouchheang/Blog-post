@@ -1,33 +1,43 @@
 "use client";
 import { useEffect, useState } from "react";
 import AxiosInstance from "@/utils/axiosInstance";
+
 import UpdateBlogForm from "@/components/updateBlog";
 import { useRouter } from "next/navigation";
 import Header from "../../components/Header";
 import Bgi from "@/images/bg1.jpg";
 import Link from "next/link"; 
 
+
 const PublicBlog = () => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
+
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [thumbnail, setThumbnail] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
+
+
+
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 9; 
 
+  const [title, setTitle] = useState("");
+  const [desc, setDesc] = useState("");
+  const [thumbnail, setThumbnail] = useState(null);
+
   useEffect(() => {
-    const fetchBlogs = async (Page) => {
+    const fetchBlogs = async (page) => {
       try {
         setLoading(true); // Set loading state to true while fetching data
         const response = await AxiosInstance.get(
-          `blog/get-all-blog-public?page=${Page}&limit=${limit}`
+          `blog/get-all-blog-public?page=${page}&limit=${limit}`
         );
 
         // Make sure the response structure matches what you're using
@@ -42,7 +52,7 @@ const PublicBlog = () => {
 
     fetchBlogs(currentPage); // Call fetchBlogs with the currentPage
 
-  }, [currentPage]); // Run effect whenever currentPage changes
+  }, [currentPage]);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -60,9 +70,12 @@ const PublicBlog = () => {
     router.push(`/view/${id}`);
   };
 
+  const closeModal = () => {
+    setShowUpdateModal(false);
+  };
+
   const handleCreateBlog = async (e) => {
     e.preventDefault();
-
     try {
       const imageFormData = new FormData();
       imageFormData.append("file", thumbnail);
@@ -95,11 +108,6 @@ const PublicBlog = () => {
     }
   };
 
-  const closeModal = () => {
-    setShowUpdateModal(false);
-    setSelectedBlog(null);
-  };
-
   return (
     <div className="bg-white min-h-screen flex flex-col">
       <Header />
@@ -112,16 +120,16 @@ const PublicBlog = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="title w-full flex flex-col items-center pt-16 ">
+        <div className="title w-full flex flex-col items-center pt-16">
           <Link href="blog">
             <p className="cursor-pointer flex items-center justify-center h-14 w-60 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 rounded-full shadow-lg mb-12 hover:scale-105 transition-transform">
               👋 Own blog
             </p>
           </Link>
 
-          <h1 className="font-bold text-center bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent text-7xl sm:text-6xl ">
+          <h1 className="font-bold text-center bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent text-7xl sm:text-6xl">
             Blog Post
-            <br /> Felling Expressions
+            <br /> Feeling Expressions
           </h1>
         </div>
 
@@ -228,19 +236,21 @@ const PublicBlog = () => {
             Next
           </button>
         </div>
-
-        {showUpdateModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white w-[90%] sm:w-[50%] md:w-[40%] lg:w-[30%] p-8 rounded-lg shadow-lg">
-              <UpdateBlogForm
-                blog={selectedBlog}
-                closeModal={closeModal}
-                setShowUpdateModal={setShowUpdateModal}
-              />
-            </div>
-          </div>
-        )}
       </div>
+
+      {showUpdateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white w-[90%] sm:w-[50%] md:w-[40%] lg:w-[30%] p-8 rounded-lg shadow-lg relative transform transition-transform duration-300 ease-out">
+            <button
+              onClick={closeModal}
+              className="absolute top-2 right-2 text-gray-500 hover:text-red-500 transition-colors"
+            >
+              Close
+            </button>
+            <UpdateBlogForm blog={selectedBlog} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
