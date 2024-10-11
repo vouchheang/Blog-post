@@ -177,7 +177,7 @@ const Blog = () => {
               <button onClick={() => handleEdit(post)}>
                 <PencilIcon className="h-7 w-5 text-gray-500 cursor-pointer hover:text-blue-500" />
               </button>
-              <DeleteBlog blogId={post.id} onDeleteSuccess={handleDeleteSuccess} />
+              <DeleteBlog blogId={post._id} onDeleteSuccess={handleDeleteSuccess} />
             </div>
           </div>
         </div>
