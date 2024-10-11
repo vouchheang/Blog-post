@@ -1,6 +1,8 @@
 import Header from "../../components/Header";
 import Bgi from "../../images/bg1.jpg";
 import GetBlog from "@/components/getBlog";
+import Link from "next/link"; // Import Link for navigation
+
 export default function Blogpage() {
   return (
     <div className="bg-white flex flex-col ">
@@ -16,9 +18,12 @@ export default function Blogpage() {
         }}
       >
         <div className="title w-full flex flex-col items-center pt-16 ">
-          <p className="flex items-center justify-center h-14 w-60 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 rounded-full shadow-lg mb-12">
-            👋 Sharing
-          </p>
+          {/* Use Link to navigate to the public page */}
+          <Link href="/allblogs">
+            <p className="cursor-pointer flex items-center justify-center h-14 w-60 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 rounded-full shadow-lg mb-12 hover:scale-105 transition-transform">
+              👋 Public
+            </p>
+          </Link>
 
           <h1 className="font-bold text-center bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent text-7xl sm:text-6xl ">
             Blog Post
