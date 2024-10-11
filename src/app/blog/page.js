@@ -1,7 +1,8 @@
 import Header from "../../components/Header";
 import Bgi from "../../images/bg1.jpg";
 import GetBlog from "@/components/getBlog";
-import Link from "next/link"; // Import Link for navigation
+import Link from "next/link"; 
+
 
 export default function Blogpage() {
   return (
@@ -18,7 +19,6 @@ export default function Blogpage() {
         }}
       >
         <div className="title w-full flex flex-col items-center pt-16 ">
-          {/* Use Link to navigate to the public page */}
           <Link href="/allblogs">
             <p className="cursor-pointer flex items-center justify-center h-14 w-60 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 rounded-full shadow-lg mb-12 hover:scale-105 transition-transform">
               👋 Public

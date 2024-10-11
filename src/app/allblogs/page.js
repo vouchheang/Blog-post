@@ -1,23 +1,32 @@
 "use client";
 import { useEffect, useState } from "react";
 import AxiosInstance from "@/utils/axiosInstance";
+
+import UpdateBlogForm from "@/components/updateBlog";
 import { useRouter } from "next/navigation";
 import Header from "../../components/Header";
 import Bgi from "@/images/bg1.jpg";
-import Link from "next/link"; // Import Link for navigation
-import UpdateBlogForm from "@/components/updateBlog";
+import Link from "next/link"; 
+
 
 const PublicBlog = () => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [selectedBlog, setSelectedBlog] = useState(null);
+
+  const [title, setTitle] = useState("");
+  const [desc, setDesc] = useState("");
+  const [thumbnail, setThumbnail] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedBlog, setSelectedBlog] = useState(null);
+
+
+
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 9; // Items per page
+  const limit = 9; 
 
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
@@ -83,10 +92,8 @@ const PublicBlog = () => {
       }
 
       const postData = { title, desc, thumbnail: imageUrl };
-      const blogResponse = await AxiosInstance.post(
-        "blog/create-blog",
-        postData
-      );
+      const blogResponse = await AxiosInstance.post("blog/create-blog", postData);
+
       setData((prevData) => [...prevData, blogResponse.data]);
       setShowForm(false);
       setTitle("");
@@ -149,12 +156,6 @@ const PublicBlog = () => {
               onChange={(e) => setThumbnail(e.target.files[0])}
               className="border p-2 text-black w-full mb-2 rounded-md"
             />
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded w-full"
-            >
-              Create Blog
-            </button>
           </form>
         )}
 
@@ -196,9 +197,7 @@ const PublicBlog = () => {
                     )}
                   </p>
                   <div className="flex gap-2">
-                    <p className="text-gray-500 font-bold text-md">
-                      Created By:
-                    </p>
+                    <p className="text-gray-500 font-bold text-md">Created By:</p>
                     <p className="text-gray-500 font-bold text-md">
                       {post.createdBy.firstName}
                     </p>
