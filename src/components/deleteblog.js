@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import AxiosInstance from "../utils/axiosInstance";
+import { TrashIcon } from "@heroicons/react/24/solid";
 
 const DeleteBlog = ({ blogId, onDeleteSuccess }) => {
   const [blogs, setBlogs] = useState([]);
@@ -20,36 +21,30 @@ const DeleteBlog = ({ blogId, onDeleteSuccess }) => {
       setError("Failed to fetch blogs: " + error.message);
     }
   };
-
   const handleDeleteBlog = async () => {
+    console.log(blogId, "====");
+
     if (!blogId) {
       setError("No blog ID provided for deletion.");
       return;
     }
 
     try {
-      await AxiosInstance.delete(`blog/delete-blog/${blogId}`); 
-      onDeleteSuccess(); 
-      alert("Blog deleted successfully!");
-      fetchBlogs(); 
+      await AxiosInstance.delete(`blog/delete-blog/${blogId}`);
+      onDeleteSuccess();
+      fetchBlogs();
     } catch (error) {
       setError("Failed to delete blog: " + error.message);
     }
   };
 
   return (
-    <div className="card bg-white rounded-xl p-6 w-[90%] m-auto">
-      <h1 className="text-2xl font-bold mb-4">Delete Blog</h1>
-
-      <button
-        onClick={handleDeleteBlog}
-        className="bg-gradient-to-r from-pink-500 to-blue-500 p-2 pl-6 pr-6 mt-2 rounded-sm text-white"
-      >
-        Delete Blog
+    <>
+      <button onClick={handleDeleteBlog} className="hover:text-red-500 text-gray-500">
+        <TrashIcon className="h-5 w-6" />
       </button>
-
       {error && <p className="text-red-500 mt-2">{error}</p>}
-    </div>
+    </>
   );
 };
 
