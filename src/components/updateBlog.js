@@ -1,23 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
 import AxiosInstance from "../utils/axiosInstance";
-import { PencilIcon } from "@heroicons/react/24/solid";
 
 const UpdateBlog = ({ blog = null, isOpen = false }) => {
   const [blogs, setBlogs] = useState([]);
-  const [id, setId] = useState("");
-  const [selectedBlog, setSelectedBlog] = useState(null);
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
+  const [id, setId] = useState(blog?._id || "");
+  const [selectedBlog, setSelectedBlog] = useState(blog || null);
+  const [title, setTitle] = useState(blog?.title || "");
+  const [desc, setDesc] = useState(blog?.desc || "");
   const [thumbnail, setThumbnail] = useState(null);
   const [error, setError] = useState(null);
 
-  // Logging to verify if the component renders
-  console.log("UpdateBlog component rendered");
-
   useEffect(() => {
-    fetchBlogs();
-  }, []);
+    if (!blog) {
+      fetchBlogs();
+    }
+  }, [blog]);
 
   const fetchBlogs = async () => {
     try {
@@ -95,7 +93,7 @@ const UpdateBlog = ({ blog = null, isOpen = false }) => {
     <div className="card bg-white rounded-xl shadow-md p-6 w-[90%] m-auto">
       <h1 className="text-2xl font-bold mb-4">Update Blogs</h1>
 
-      {selectedBlog || true ? ( // Always show the form for debugging purposes
+      {isOpen && (
         <form onSubmit={handleUpdateBlog} className="mb-8">
           <input
             type="text"
@@ -125,19 +123,11 @@ const UpdateBlog = ({ blog = null, isOpen = false }) => {
             Update
           </button>
 
-          <button
-            type="button"
-            onClick={resetForm}
-            className="bg-gray-300 text-black p-2 pl-6 pr-6 mt-2 ml-2 rounded-sm"
-          >
-            Cancel
-          </button>
-
           {error && <p className="text-red-500 mt-2">{error}</p>}
         </form>
-      ) : (
-        <p>Please select a blog to edit.</p>
       )}
+
+     
     </div>
   );
 };
