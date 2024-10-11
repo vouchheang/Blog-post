@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import AxiosInstance from "@/utils/axiosInstance";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import UpdateBlogForm from "@/components/updateBlog";
+import { useRouter } from "next/navigation";
 
 const PublicBlog = () => {
   const [data, setData] = useState([]);
@@ -14,6 +15,8 @@ const PublicBlog = () => {
   const [thumbnail, setThumbnail] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -56,27 +59,33 @@ const PublicBlog = () => {
       }
 
       const postData = { title, desc, thumbnail: imageUrl };
-      const blogResponse = await AxiosInstance.post("blog/create-blog", postData);
+      const blogResponse = await AxiosInstance.post(
+        "blog/create-blog",
+        postData
+      );
       setData((prevData) => [...prevData, blogResponse.data]);
       setShowForm(false);
       setTitle("");
       setDesc("");
       setThumbnail(null);
     } catch (error) {
-      console.error("Error creating blog:", error.response?.data || error.message || error);
+      console.error(
+        "Error creating blog:",
+        error.response?.data || error.message || error
+      );
       setError("Failed to create blog. Please try again.");
     }
   };
 
-  const handleEdit = (post) => {
-    setSelectedBlog(post);
-    setShowUpdateModal(true);
-  };
+
 
   const closeModal = () => {
     setShowUpdateModal(false);
     setSelectedBlog(null);
   };
+  const handleView = async (id) => {
+    router.push(`/view/${id}`)
+  }
 
   return (
     <div className="bg-light-blue-100 space-y-6 mt-6 p-4">
@@ -88,7 +97,10 @@ const PublicBlog = () => {
       </button>
 
       {showForm && (
-        <form onSubmit={handleCreateBlog} className="mt-4 w-full max-w-xl m-auto">
+        <form
+          onSubmit={handleCreateBlog}
+          className="mt-4 w-full max-w-xl m-auto"
+        >
           <input
             type="text"
             value={title}
@@ -119,22 +131,50 @@ const PublicBlog = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl m-auto">
         {data.map((post) => {
+
           const maxChars = 100;
-          const descToShow = post.desc.length > maxChars ? post.desc.slice(0, maxChars) + "..." : post.desc;
+          const descToShow =
+            post.desc.length > maxChars
+              ? post.desc.slice(0, maxChars) + "..."
+              : post.desc;
 
           return (
-            <div key={post._id} className="card bg-white rounded-xl shadow-md p-4 flex flex-col gap-2 hover:shadow-lg transition-shadow duration-300">
-              <img src={post.thumbnail} className="w-full h-45 rounded-xl object-cover" alt="Image" />
+            <div
+              key={post._id}
+              className="card bg-white rounded-xl shadow-md p-4 flex flex-col gap-2 hover:shadow-lg transition-shadow duration-300"
+              onClick={() =>handleView(post._id)}
+            >
+              <img
+                src={post.thumbnail}
+                className="w-full h-45 rounded-xl object-cover"
+                alt="Image"
+              />
               <div className="flex flex-col justify-between">
-                <h2 className="text-purple-700 text-lg font-semibold">{post.title}</h2>
+                <h2 className="text-purple-700 text-lg font-semibold">
+                  {post.title}
+                </h2>
                 <p className="text-gray-800 text-sm">
                   {descToShow}
                   {post.desc.length > maxChars && (
-                    <span onClick={() => alert(post.desc)} className="text-blue-500 cursor-pointer ml-1">
+                    <span
+                      onClick={() => alert(post.desc)}
+                      className="text-blue-500 cursor-pointer ml-1"
+                      
+                    >
                       See more
                     </span>
                   )}
                 </p>
+                <div className="flex gap-2">
+                <p className="text-gray-500 font-bold text-md">Created By:</p>
+                 <p className="text-gray-500 font-bold text-md">
+                   {post.createdBy.firstName}
+                 </p> 
+                 <p className="text-gray-500 font-bold text-md">
+                   {post.createdBy.lastName}
+                 </p>
+               </div>
+
               </div>
             </div>
           );
@@ -150,8 +190,14 @@ const PublicBlog = () => {
             >
               ✕
             </button>
-            <h2 className="text-xl font-semibold text-center text-purple-700 mb-4">Update Blog</h2>
-            <UpdateBlogForm blog={selectedBlog} isOpen={showUpdateModal} onClose={closeModal} />
+            <h2 className="text-xl font-semibold text-center text-purple-700 mb-4">
+              Update Blog
+            </h2>
+            <UpdateBlogForm
+              blog={selectedBlog}
+              isOpen={showUpdateModal}
+              onClose={closeModal}
+            />
           </div>
         </div>
       )}
