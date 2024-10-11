@@ -1,7 +1,7 @@
 import Header from "../../components/Header";
 import Bgi from "../../images/bg1.jpg";
 import GetBlog from "@/components/getBlog";
-import Update from "@/components/updateBlog"
+import Delete from "@/components/deleteblog"
 
 export default function Blogpage() {
   return (
@@ -30,7 +30,8 @@ export default function Blogpage() {
 
         <div className="w-2/3 bg-gray-100 opacity-[85%] m-auto mt-12 p-8 rounded-xl shadow-xl mb-8">
           <GetBlog />
-          <Update/>
+          
+          <Delete/>
         </div>
       </div>
     </div>

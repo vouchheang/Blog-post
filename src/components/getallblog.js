@@ -5,11 +5,11 @@ import { TrashIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/solid";
 import UpdateBlogForm from "@/components/updateBlog";
 import DeleteBlog from "@/components/deleteblog";
 
-const Blog = () => {
+const PublicBlog = () => {
   const [data, setData] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [selectPublicedBlog, setSelectedBlog] = useState(null);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [thumbnail, setThumbnail] = useState(null);
@@ -18,7 +18,7 @@ const Blog = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await AxiosInstance.get("blog/get-all-blogs");
+        const response = await AxiosInstance.get("blog/get-all-blog-public");
         setData(response.data.blogs);
       } catch (error) {
         setError(error.message);
@@ -140,20 +140,18 @@ const Blog = () => {
 
       {data.map((post) => (
         <div
-          key={post.id} 
-          className="card bg-white rounded-xl shadow-md p-6 w-[90%] m-auto flex"
+          key={post.id}
+          className="card bg-white rounded-xl shadow-md p-6 w-[90%] m-auto flex flex-col sm:flex-row gap-4 hover:shadow-lg transition-shadow duration-300"
         >
           <img
             src={`${post.thumbnail}`}
-            className="w-[18%] rounded-xl shadow-lg"
+            className="w-full h-48 sm:h-36 rounded-xl object-cover"
             alt="Image"
           />
-          <div className="flex flex-col space-x-4 ml-8 gap-3">
-            <h2 className="text-purple-700 text-2xl font-semibold ml-4">
-              {post.title}
-            </h2>
-            <p className="text-gray-800 text-lg">{post.desc}</p>
-            <div className="space-x-4 flex mt-4">
+          <div className="flex flex-col justify-between">
+            <h2 className="text-purple-700 text-xl font-semibold">{post.title}</h2>
+            <p className="text-gray-800 text-md">{post.desc}</p>
+            <div className="flex space-x-4 mt-4">
               <button onClick={() => handleEdit(post)}>
                 <PencilIcon className="h-7 w-5 text-gray-500 cursor-pointer hover:text-blue-500" />
               </button>
@@ -188,4 +186,4 @@ const Blog = () => {
   );
 };
 
-export default Blog;
+export default PublicBlog;
