@@ -33,7 +33,7 @@ const Blog = () => {
       }
     };
 
-    fetchBlogs(currentPage); // Fetch blogs when the component mounts or page changes
+    fetchBlogs(currentPage); 
   }, [currentPage]);
 
   const handleCreateBlog = async (e) => {
