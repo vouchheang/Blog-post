@@ -37,14 +37,15 @@ export default function Login() {
       });
 
       if (response.ok) {
-        const data = await response.json(); // get the token
-        localStorage.setItem('token', data.token); // save token in localStorage
+        const data = await response.json(); // Get the token
+        localStorage.setItem('token', data.token); // Save token in localStorage
         setIsSuccess(true); // Set success state to true
         setMessage('Login successful! Redirecting...');
-        router.push('/blog'); // redirect to the blog page after login
+        router.push('/blog'); // Redirect to the blog page after login
       } else {
+        const errorData = await response.json(); // Get error details
         setIsSuccess(false); // Set success state to false
-        setMessage('Login failed. Please try again.');
+        setMessage(errorData.message || 'Login failed. Please try again.'); // Show error message
       }
     } catch (error) {
       setIsSuccess(false); // Set success state to false
