@@ -8,34 +8,32 @@ export default function Header() {
   const router = useRouter();
   const [userProfile, setUserProfile] = useState(null);
 
-  // Function to navigate to login page
   const goToLogin = () => {
     router.push("/login");
   };
 
-  // Function to navigate to signup page
   const goToSignup = () => {
     router.push("/signup");
   };
 
-  // Function to navigate to the landing page after logout
   const goToLandingPage = () => {
     router.push("/");
   };
 
-  // Logout function to remove token from localStorage and redirect to landing page
+  const goToBlog = () => {
+    router.push('/blog'); // Navigate to the blog page
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     setUserProfile(null);
     goToLandingPage();
   };
 
-  // Function to navigate to the profile page
   const goToProfile = () => {
-    router.push("/profile"); // Navigate to the profile page
+    router.push('/profile'); 
   };
 
-  // Fetch user profile when component mounts
   useEffect(() => {
     const fetchUserProfile = async () => {
       const token = localStorage.getItem("token");
@@ -69,7 +67,9 @@ export default function Header() {
 
   return (
     <header className="bg-[#7fa1e8] w-full p-4 flex items-center justify-between shadow-md">
-      {/* <img src={logo.src} className="logo w-[350px] h-[100px] text-2xl font-bold"/> */}
+      <div className="logo text-white text-2xl font-bold cursor-pointer" onClick={goToBlog}>
+        Wizards
+      </div>
 
       <div className="flex items-center gap-4">
         {userProfile ? (
@@ -82,7 +82,7 @@ export default function Header() {
               <img
                 src={userProfile.avatar || "default-avatar-url.jpg"}
                 alt="User Avatar"
-                className="w-10 h-10 rounded-full"
+                className="w-10 h-10 rounded-full object-cover "
               />
               <span className="text-white font-semibold">
                 {userProfile.firstName}
