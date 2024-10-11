@@ -4,6 +4,8 @@ import AxiosInstance from "../utils/axiosInstance";
 import { TrashIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/solid";
 import UpdateBlogForm from "@/components/updateBlog";
 import DeleteBlog from "@/components/deleteblog";
+import { useRouter } from "next/navigation";
+
 
 const Blog = () => {
   const [data, setData] = useState([]);
@@ -14,7 +16,8 @@ const Blog = () => {
   const [desc, setDesc] = useState("");
   const [thumbnail, setThumbnail] = useState(null);
   const [error, setError] = useState(null);
-  
+  const router = useRouter();
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -33,13 +36,14 @@ const Blog = () => {
       }
     };
 
-    fetchBlogs(currentPage); 
+    fetchBlogs(currentPage);
   }, [currentPage]);
 
   const handleCreateBlog = async (e) => {
     e.preventDefault();
     setError(null);
 
+    
     if (!title || !desc || !thumbnail) {
       setError("Title, description, and thumbnail are required.");
       return;
@@ -75,6 +79,7 @@ const Blog = () => {
         postData
       );
 
+      
       setData((prevData) => [...prevData, blogResponse.data]);
       setShowForm(false);
       setTitle("");
@@ -100,9 +105,13 @@ const Blog = () => {
   };
 
   const handleDeleteSuccess = (deletedBlogId) => {
-    setData((prevData) => prevData.filter((post) => post._id !== deletedBlogId));
+    setData((prevData) =>
+      prevData.filter((post) => post._id !== deletedBlogId)
+    );
   };
-
+  const handleView = (id) => {
+    router.push(`/view/${id}`);
+  };
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -162,11 +171,13 @@ const Blog = () => {
         <div
           key={post.id}
           className="card bg-white rounded-xl shadow-md p-6 w-[90%] m-auto flex"
+          
         >
           <img
             src={`${post.thumbnail}`}
-            className="w-[18%] rounded-xl shadow-lg"
+            className="w-[25%] rounded-xl shadow-lg"
             alt="Image"
+            onClick={() => handleView(post._id)}
           />
           <div className="flex flex-col space-x-4 ml-8 gap-3">
             <h2 className="text-purple-700 text-2xl font-semibold ml-4">
@@ -177,7 +188,10 @@ const Blog = () => {
               <button onClick={() => handleEdit(post)}>
                 <PencilIcon className="h-7 w-5 text-gray-500 cursor-pointer hover:text-blue-500" />
               </button>
-              <DeleteBlog blogId={post._id} onDeleteSuccess={handleDeleteSuccess} />
+              <DeleteBlog
+                blogId={post._id}
+                onDeleteSuccess={handleDeleteSuccess}
+              />
             </div>
           </div>
         </div>
