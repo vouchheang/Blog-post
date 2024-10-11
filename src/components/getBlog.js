@@ -14,19 +14,27 @@ const Blog = () => {
   const [desc, setDesc] = useState("");
   const [thumbnail, setThumbnail] = useState(null);
   const [error, setError] = useState(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10; // Items per page
 
   useEffect(() => {
-    const fetchBlogs = async () => {
+    const fetchBlogs = async (page) => {
       try {
-        const response = await AxiosInstance.get("blog/get-all-blogs");
+        const response = await AxiosInstance.get(
+          `blog/get-all-blogs?page=${page}&limit=${limit}`
+        );
         setData(response.data.blogs);
+        setTotalPages(Math.ceil(response.data.totalBlogs / limit)); // Calculate total pages
       } catch (error) {
         setError(error.message);
       }
     };
 
-    fetchBlogs();
-  }, []);
+    fetchBlogs(currentPage); // Fetch blogs when the component mounts or page changes
+  }, [currentPage]);
 
   const handleCreateBlog = async (e) => {
     e.preventDefault();
@@ -95,6 +103,18 @@ const Blog = () => {
     setData((prevData) => prevData.filter((post) => post._id !== deletedBlogId));
   };
 
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
     <div className="space-y-6 mt-6">
       <button
@@ -140,7 +160,7 @@ const Blog = () => {
 
       {data.map((post) => (
         <div
-          key={post.id} 
+          key={post.id}
           className="card bg-white rounded-xl shadow-md p-6 w-[90%] m-auto flex"
         >
           <img
@@ -162,6 +182,33 @@ const Blog = () => {
           </div>
         </div>
       ))}
+
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center mt-6 w-[90%] m-auto">
+        <button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          className={`bg-blue-500 text-white px-4 py-2 rounded ${
+            currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          Previous
+        </button>
+
+        <p className="text-gray-600">
+          Page {currentPage} of {totalPages}
+        </p>
+
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+          className={`bg-blue-500 text-white px-4 py-2 rounded ${
+            currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          Next
+        </button>
+      </div>
 
       {showUpdateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
