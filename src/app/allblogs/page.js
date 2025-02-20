@@ -28,9 +28,6 @@ const PublicBlog = () => {
   const [totalPages, setTotalPages] = useState(1);
   const limit = 9; 
 
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
-  const [thumbnail, setThumbnail] = useState(null);
 
   useEffect(() => {
     const fetchBlogs = async (page) => {
